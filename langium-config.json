@@ -1,0 +1,11 @@
+{
+  "projectName": "cypresstestgenerator",
+  "languages": [
+    {
+      "id": "cypress-test-generator",
+      "grammar": "src/language/cypress-test-generator.langium",
+      "fileExtensions": [".cdsl"]
+    }
+  ],
+  "out": "src/language/generated"
+}
