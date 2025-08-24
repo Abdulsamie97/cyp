@@ -1,6 +1,6 @@
 export const testData: Record<string, string> = {
     url: 'https://lsf.htw-berlin.de',
-    testuser: 's0562233',
-    pass: 'Shahidkapoor1',
+    testuser: 'username eingeben',
+    pass: 'pass eingeben',
     messageBox: '562233'
 };
