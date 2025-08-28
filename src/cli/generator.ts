@@ -5,6 +5,20 @@ import { selectorMap } from './selectors.js';
 import { testData } from './test-data.js';
 import { extractDestinationAndName } from './cli-util.js';
 
+
+function resolve(map: Record<string, string>, key: string, kind: string): string {
+    if (map[key]) {
+        return map[key];
+    }
+    const suggestion = Object.keys(map).find(k => k.toLowerCase() === key.toLowerCase());
+    if (suggestion) {
+        console.warn(`${kind} '${key}' nicht gefunden. Meintest du '${suggestion}'?`);
+        return map[suggestion];
+    }
+    console.warn(`${kind} '${key}' nicht gefunden. Verfügbare ${kind.toLowerCase()}e: ${Object.keys(map).join(', ')}`);
+    return key;
+}
+
 export function generateCypress(model: Model, filePath: string, destination: string | undefined): string {
     const data = extractDestinationAndName(filePath, destination);
     const cypressFolder = data.destination ?? 'src/generated';
@@ -29,21 +43,20 @@ export function generateCypress(model: Model, filePath: string, destination: str
 
         for (const step of test.steps) {
             if (step.$type === 'Navigate') {
-                const urlKey = step.url;
-                const actualUrl = testData[urlKey] ?? step.url;
+                const actualUrl = testData[step.url] ? resolve(testData, step.url, 'Testdaten') : step.url;
                 output += `    cy.visit('${actualUrl}');\n`;
             } else if (step.$type === 'Fill') {
                 const valueKey = step.value.replace(/^["']|["']$/g, '');
-                const actualValue = testData[valueKey] ?? step.value;
-                const selector = selectorMap[step.selector] ?? step.selector;
+                const actualValue = resolve(testData, valueKey, 'Testdaten');
+                const selector = resolve(selectorMap, step.selector, 'Selektor');
                 output += `    cy.get('${selector}').type(${JSON.stringify(actualValue)});\n`;
             } else if (step.$type === 'Click') {
-                const selector = selectorMap[step.selector] ?? step.selector;
+                const selector = resolve(selectorMap, step.selector, 'Selektor');
                 output += `    cy.get('${selector}').click();\n`;
             } else if (step.$type === 'ExpectText') {
-                const selector = selectorMap[step.selector] ?? step.selector;
-                const expectedText = testData[step.text] ?? step.text;
-                output += `    cy.get('${selector}').should('contain', ${JSON.stringify(expectedText)});\n`;
+                const selector = resolve(selectorMap, step.selector, 'Selektor');
+                const expectedText = resolve(testData, step.text, 'Testdaten');
+                output += `    cy.get('${selector}').contains(${JSON.stringify(expectedText)});\n`;
             }
         }
 
