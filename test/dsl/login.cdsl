@@ -2,6 +2,5 @@ TEST testLogin
   NAVIGATE TO url
   FILL username WITH "testuser"
   FILL password WITH "pass"
-  CLICK loginButton
+  CLICK test
   EXPECT TEXT loginSuccess IN messageBox
-

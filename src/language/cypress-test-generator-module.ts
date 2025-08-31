@@ -2,6 +2,7 @@ import { type Module, inject } from 'langium';
 import { createDefaultModule, createDefaultSharedModule, type DefaultSharedModuleContext, type LangiumServices, type LangiumSharedServices, type PartialLangiumServices } from 'langium/lsp';
 import { CypressTestGeneratorGeneratedModule, cypresstestgeneratorGeneratedSharedModule } from './generated/module.js';
 import { CypressTestGeneratorValidator, registerValidationChecks } from './cypress-test-generator-validator.js';
+import { CypressTestGeneratorCompletionProvider } from './cypress-test-generator-completion.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -26,7 +27,10 @@ export type CypressTestGeneratorServices = LangiumServices & CypressTestGenerato
 export const CypressTestGeneratorModule: Module<CypressTestGeneratorServices, PartialLangiumServices & CypressTestGeneratorAddedServices> = {
     validation: {
         CypressTestGeneratorValidator: () => new CypressTestGeneratorValidator()
-    }
+    },
+    lsp: {
+        CompletionProvider: services => new CypressTestGeneratorCompletionProvider(services)
+        }
 };
 
 /**
