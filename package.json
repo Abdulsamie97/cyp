@@ -101,7 +101,7 @@
             {
                 "language": "cypress-test-generator",
                 "scopeName": "source.cypress-test-generator",
-                "path": "syntaxes/cypress-test-generator.tmLanguage.json"
+                "path": "src/syntaxes/cypress-test-generator.tmLanguage.json"
             }
         ]
     },

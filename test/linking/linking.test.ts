@@ -1,53 +1,28 @@
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
-import { EmptyFileSystem, type LangiumDocument } from "langium";
-import { expandToString as s } from "langium/generate";
-import { clearDocuments, parseHelper } from "langium/test";
-import { createCypressTestGeneratorServices } from "../../src/language/cypress-test-generator-module.js";
-import { Model, isModel } from "../../src/language/generated/ast.js";
+import { afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { EmptyFileSystem, type LangiumDocument } from 'langium';
+import { clearDocuments, parseHelper } from 'langium/test';
+import { createCypressTestGeneratorServices } from '../../src/language/cypress-test-generator-module.js';
+import type { Model } from '../../src/language/generated/ast.js';
 
 let services: ReturnType<typeof createCypressTestGeneratorServices>;
-let parse:    ReturnType<typeof parseHelper<Model>>;
+let parse: ReturnType<typeof parseHelper<Model>>;
 let document: LangiumDocument<Model> | undefined;
 
 beforeAll(async () => {
     services = createCypressTestGeneratorServices(EmptyFileSystem);
     parse = parseHelper<Model>(services.CypressTestGenerator);
-
-    // activate the following if your linking test requires elements from a built-in library, for example
-    // await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
 });
 
-afterEach(async () => {
-    document && clearDocuments(services.shared, [ document ]);
+afterEach(() => {
+    document && clearDocuments(services.shared, [document]);
 });
 
 describe('Linking tests', () => {
-
-    test('linking of greetings', async () => {
+    test('linking produces no errors', async () => {
         document = await parse(`
-            person Langium
-            Hello Langium!
+            TEST login
+            CLICK loginButton
         `);
-
-        expect(
-            // here we first check for validity of the parsed document object by means of the reusable function
-            //  'checkDocumentValid()' to sort out (critical) typos first,
-            // and then evaluate the cross references we're interested in by checking
-            //  the referenced AST element as well as for a potential error message;
-            checkDocumentValid(document)
-                || document.parseResult.value.greetings.map(g => g.person.ref?.name || g.person.error?.message).join('\n')
-        ).toBe(s`
-            Langium
-        `);
+        expect(document.diagnostics ?? []).toHaveLength(0);
     });
 });
-
-function checkDocumentValid(document: LangiumDocument): string | undefined {
-    return document.parseResult.parserErrors.length && s`
-        Parser errors:
-          ${document.parseResult.parserErrors.map(e => e.message).join('\n  ')}
-    `
-        || document.parseResult.value === undefined && `ParseResult is 'undefined'.`
-        || !isModel(document.parseResult.value) && `Root AST object is a ${document.parseResult.value.$type}, expected a '${Model}'.`
-        || undefined;
-}

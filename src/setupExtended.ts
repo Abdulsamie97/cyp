@@ -4,7 +4,7 @@ import { configureWorker, defineUserServices } from './setupCommon.js';
 export const setupConfigExtended = (): UserConfig => {
     const extensionFilesOrContents = new Map();
     extensionFilesOrContents.set('/language-configuration.json', new URL('../language-configuration.json', import.meta.url));
-    extensionFilesOrContents.set('/cypress-test-generator-grammar.json', new URL('../syntaxes/cypress-test-generator.tmLanguage.json', import.meta.url));
+    extensionFilesOrContents.set('/cypress-test-generator-grammar.json', new URL('./syntaxes/cypress-test-generator.tmLanguage.json', import.meta.url));
 
     return {
         wrapperConfig: {

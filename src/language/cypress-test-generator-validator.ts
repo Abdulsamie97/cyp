@@ -89,9 +89,9 @@ export class CypressTestGeneratorValidator {
         if (map[key]) return;
         const suggestion = Object.keys(map).find(k => k.toLowerCase() === key.toLowerCase());
         if (suggestion) {
-            accept('warning', `${kind} '${key}' unbekannt. Meintest du '${suggestion}'?`, { node });
+            accept('error', `${kind} '${key}' unbekannt. Meintest du '${suggestion}'?`, { node });
         } else {
-            accept('warning', `${kind} '${key}' unbekannt. Verfügbare ${kind.toLowerCase()}e: ${Object.keys(map).join(', ')}`, { node });
+            accept('error', `${kind} '${key}' unbekannt. Verfügbare ${kind.toLowerCase()}e: ${Object.keys(map).join(', ')}`, { node });
         }
     }
     // Weitere Validierungen können hier hinzugefügt werden

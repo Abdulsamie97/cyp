@@ -1,60 +1,30 @@
-import { beforeAll, describe, expect, test } from "vitest";
-import { EmptyFileSystem, type LangiumDocument } from "langium";
-import { expandToString as s } from "langium/generate";
-import { parseHelper } from "langium/test";
-import { createCypressTestGeneratorServices } from "../../src/language/cypress-test-generator-module.js";
-import { Model, isModel } from "../../src/language/generated/ast.js";
+import { beforeAll, describe, expect, test } from 'vitest';
+import { EmptyFileSystem } from 'langium';
+import { parseHelper } from 'langium/test';
+import { createCypressTestGeneratorServices } from '../../src/language/cypress-test-generator-module.js';
+import type { Model } from '../../src/language/generated/ast.js';
 
 let services: ReturnType<typeof createCypressTestGeneratorServices>;
-let parse:    ReturnType<typeof parseHelper<Model>>;
-let document: LangiumDocument<Model> | undefined;
+let parse: ReturnType<typeof parseHelper<Model>>;
 
 beforeAll(async () => {
     services = createCypressTestGeneratorServices(EmptyFileSystem);
     parse = parseHelper<Model>(services.CypressTestGenerator);
-
-    // activate the following if your linking test requires elements from a built-in library, for example
-    // await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
 });
 
 describe('Parsing tests', () => {
-
     test('parse simple model', async () => {
-        document = await parse(`
-            person Langium
-            Hello Langium!
+        const document = await parse(`
+            TEST login
+            FILL username WITH "user"
+            CLICK loginButton
+            EXPECT TEXT loginSuccess IN successData
+            NAVIGATE TO homeUrl
         `);
 
-        // check for absence of parser errors the classic way:
-        //  deactivated, find a much more human readable way below!
-        // expect(document.parseResult.parserErrors).toHaveLength(0);
-
-        expect(
-            // here we use a (tagged) template expression to create a human readable representation
-            //  of the AST part we are interested in and that is to be compared to our expectation;
-            // prior to the tagged template expression we check for validity of the parsed document object
-            //  by means of the reusable function 'checkDocumentValid()' to sort out (critical) typos first;
-            checkDocumentValid(document) || s`
-                Persons:
-                  ${document.parseResult.value?.persons?.map(p => p.name)?.join('\n  ')}
-                Greetings to:
-                  ${document.parseResult.value?.greetings?.map(g => g.person.$refText)?.join('\n  ')}
-            `
-        ).toBe(s`
-            Persons:
-              Langium
-            Greetings to:
-              Langium
-        `);
+        expect(document.parseResult.parserErrors).toHaveLength(0);
+        const testNode = document.parseResult.value?.tests[0];
+        expect(testNode?.name).toBe('login');
+        expect(testNode?.steps).toHaveLength(4);
     });
 });
-
-function checkDocumentValid(document: LangiumDocument): string | undefined {
-    return document.parseResult.parserErrors.length && s`
-        Parser errors:
-          ${document.parseResult.parserErrors.map(e => e.message).join('\n  ')}
-    `
-        || document.parseResult.value === undefined && `ParseResult is 'undefined'.`
-        || !isModel(document.parseResult.value) && `Root AST object is a ${document.parseResult.value.$type}, expected a '${Model}'.`
-        || undefined;
-}

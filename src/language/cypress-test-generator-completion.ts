@@ -27,7 +27,8 @@ export class CypressTestGeneratorCompletionProvider extends DefaultCompletionPro
                 if (fill) {
                     const sel = GrammarUtils.findNodeForProperty(fill.$cstNode, 'selector');
                     const val = GrammarUtils.findNodeForProperty(fill.$cstNode, 'value');
-                    if (sel && offset >= sel.offset && offset <= sel.end) {
+                    const withKw = GrammarUtils.findNodeForKeyword(fill.$cstNode, 'WITH');
+                    if (sel && offset >= sel.offset && offset <= (withKw?.offset ?? Number.POSITIVE_INFINITY)) {
                         values = Object.keys(selectorMap);
                     } else if (val && offset >= val.offset && offset <= val.end) {
                         values = Object.keys(testData);
@@ -49,7 +50,8 @@ export class CypressTestGeneratorCompletionProvider extends DefaultCompletionPro
                     if (expectText) {
                         const sel = GrammarUtils.findNodeForProperty(expectText.$cstNode, 'selector');
                         const text = GrammarUtils.findNodeForProperty(expectText.$cstNode, 'text');
-                        if (sel && offset >= sel.offset && offset <= sel.end) {
+                        const inKw = GrammarUtils.findNodeForKeyword(expectText.$cstNode, 'IN');
+                        if (sel && offset >= sel.offset && offset <= (inKw?.offset ?? Number.POSITIVE_INFINITY)) {
                             values = Object.keys(selectorMap);
                         } else if (text && offset >= text.offset && offset <= text.end) {
                             values = Object.keys(testData);
@@ -73,7 +75,6 @@ export class CypressTestGeneratorCompletionProvider extends DefaultCompletionPro
             }
         }
 
-        return super.getCompletion(document, params, cancelToken);
+          return undefined;
     }
 }
-

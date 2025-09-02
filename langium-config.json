@@ -4,7 +4,13 @@
     {
       "id": "cypress-test-generator",
       "grammar": "src/language/cypress-test-generator.langium",
-      "fileExtensions": [".cdsl"]
+      "fileExtensions": [".cdsl"],
+      "textMate": {
+        "out": "src/syntaxes/cypress-test-generator.tmLanguage.json"
+      },
+      "monarch": {
+        "out": "src/syntaxes/cypress-test-generator.monarch.ts"
+      }
     }
   ],
   "out": "src/language/generated"
