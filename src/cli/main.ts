@@ -17,16 +17,16 @@ const packageContent = await fs.readFile(packagePath, 'utf-8');
 export const generateAction = async (fileName: string, opts: GenerateOptions): Promise<void> => {
     const services = createCypressTestGeneratorServices(NodeFileSystem).CypressTestGenerator;
     const model = await extractAstNode<Model>(fileName, services);
-    console.log('📥 Modell geladen?', model ? '✅' : '❌');
+    console.log('Modell geladen?', model ? 'ja' : 'nein');
 
 
     if (!model) {
-        console.error(chalk.red('❌ AST konnte nicht extrahiert werden. Datei oder Grammatikproblem?'));
+        console.error(chalk.red('AST konnte nicht extrahiert werden.'));
         return;
     }
 
     const generatedFilePath = generateCypress(model, fileName, opts.destination);
-    console.log(chalk.green(`✅ JavaScript-Code erfolgreich generiert: ${generatedFilePath}`));
+    console.log(chalk.green(`Cypress Code erfolgreich generiert: ${generatedFilePath}`));
 };
 
 

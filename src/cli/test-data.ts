@@ -1,6 +1,9 @@
 export const testData: Record<string, string> = {
     url: 'https://lsf.htw-berlin.de',
-    testuser: 's0575524',
-    pass: 'Htw3-Berlin11',
-    messageBox: '575524'
+    messageBox: '575524',
+    dozierenBox: 'Dozierendenpläne',
+    searchProfname: 'Baar',
+    appliedLogic: 'M201 Applied Logic (PÜ)',
+    moodleUrl: 'https://moodle.htw-berlin.de',
+    chatText: 'Hi Buket, wir haben Applied Logic am Montag. Kommst du?'
 };

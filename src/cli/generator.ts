@@ -1,10 +1,14 @@
-import type { Model } from '../language/generated/ast.js';
+import type { Model, Navigate, Fill, Click, ExpectText } from '../language/generated/ast.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import * as dotenv from 'dotenv';
 import { selectorMap } from './selectors.js';
 import { testData } from './test-data.js';
 import { extractDestinationAndName } from './cli-util.js';
 
+
+
+dotenv.config({ path: path.resolve(process.cwd(), 'test-data.env') });
 
 function resolve(map: Record<string, string>, key: string, kind: string): string {
     if (map[key]) {
@@ -18,6 +22,8 @@ function resolve(map: Record<string, string>, key: string, kind: string): string
     console.warn(`${kind} '${key}' nicht gefunden. Verfügbare ${kind.toLowerCase()}e: ${Object.keys(map).join(', ')}`);
     return key;
 }
+
+
 
 export function generateCypress(model: Model, filePath: string, destination: string | undefined): string {
     const data = extractDestinationAndName(filePath, destination);
@@ -36,28 +42,54 @@ export function generateCypress(model: Model, filePath: string, destination: str
     }
 
     let output = '';
+    const { MOODLE_USER, MOODLE_PASS } = process.env;
 
     for (const test of model.tests) {
         output += `describe('${test.name}', () => {\n`;
         output += `  it('${test.name}', () => {\n`;
 
-        for (const step of test.steps) {
+        let insideMoodleOrigin = false;
+        const steps = test.steps as Array<Navigate | Fill | Click | ExpectText>;
+
+        for (const step of steps) {
+            const indentation = insideMoodleOrigin ? '      ' : '    ';
             if (step.$type === 'Navigate') {
-                const actualUrl = testData[step.url] ? resolve(testData, step.url, 'Testdaten') : step.url;
-                output += `    cy.visit('${actualUrl}');\n`;
+                const actualUrl = resolve(testData, step.url, 'Testdaten');
+                output += `${indentation}cy.visit('${actualUrl}');\n`;
+                output += `${indentation}cy.wait(1000);\n`;
             } else if (step.$type === 'Fill') {
                 const valueKey = step.value.replace(/^["']|["']$/g, '');
-                const actualValue = resolve(testData, valueKey, 'Testdaten');
+                let actualValue = resolve(testData, valueKey, 'Testdaten');
+                if (actualValue === 'MOODLE_USER') {
+                    actualValue = MOODLE_USER ?? '';
+                } else if (actualValue === 'MOODLE_PASS') {
+                    actualValue = MOODLE_PASS ?? '';
+                }
                 const selector = resolve(selectorMap, step.selector, 'Selektor');
-                output += `    cy.get('${selector}').type(${JSON.stringify(actualValue)});\n`;
+                output += `${indentation}cy.get('${selector}').type(${JSON.stringify(actualValue)});\n`;
+                output += `${indentation}cy.wait(1000);\n`;
             } else if (step.$type === 'Click') {
                 const selector = resolve(selectorMap, step.selector, 'Selektor');
-                output += `    cy.get('${selector}').click();\n`;
+                if (step.selector === 'moodleLink') {
+                    const moodleUrl = resolve(testData, 'moodleUrl', 'Testdaten');
+                    output += `${indentation}cy.get('${selector}').invoke('removeAttr', 'target').click();\n`;
+                    output += `${indentation}cy.wait(1000);\n`;
+                    output += `${indentation}cy.origin('${moodleUrl}', () => {\n`;
+                    output += `${indentation}cy.wait(1000);\n`;
+                    insideMoodleOrigin = true;
+                } else {
+                    output += `${indentation}cy.get('${selector}').click();\n`;
+                    output += `${indentation}cy.wait(1000);\n`;
+                }
             } else if (step.$type === 'ExpectText') {
                 const selector = resolve(selectorMap, step.selector, 'Selektor');
                 const expectedText = resolve(testData, step.text, 'Testdaten');
-                output += `    cy.get('${selector}').contains(${JSON.stringify(expectedText)});\n`;
+                output += `${indentation}cy.get('${selector}', { timeout: 10000 }).should('be.visible').and('contain', ${JSON.stringify(expectedText)});\n`;
             }
+        }
+
+        if (insideMoodleOrigin) {
+            output += `    });\n`;
         }
 
         output += `  });\n});\n\n`;

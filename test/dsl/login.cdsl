@@ -1,6 +1,25 @@
 TEST testLogin
   NAVIGATE TO url
-  FILL username WITH 'testuser'
-  FILL password WITH 'pass'
+  FILL username WITH 'MOODLE_USER'
+  FILL password WITH 'MOODLE_PASS'
   CLICK loginButton
   EXPECT TEXT loginSuccess IN messageBox
+  EXPECT TEXT dozierenPlan IN dozierenBox
+  CLICK dozierenPlan
+  FILL searchProf WITH 'searchProfname'
+  CLICK startSearch
+  CLICK nextWeekbutton
+  CLICK nextWeekbutton
+  CLICK nextWeekbutton
+  CLICK nextWeekbutton
+  CLICK nextWeekbutton
+  EXPECT TEXT appliedLogicPlan IN appliedLogic
+  CLICK moodleLink
+  FILL moodleLogin WITH 'MOODLE_USER'
+  FILL moodlePassword WITH 'MOODLE_PASS'
+  CLICK loginClick
+  CLICK messageButton
+  CLICK chatBox
+  CLICK textBox
+  FILL textBox WITH 'chatText'
+  CLICK sendChat

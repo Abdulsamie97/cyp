@@ -86,6 +86,7 @@ export class CypressTestGeneratorValidator {
 
     private checkPlaceholder(key: string | undefined, map: Record<string, string>, kind: string, node: AstNode, accept: ValidationAcceptor): void {
         if (!key) return;
+        if (map === testData && key.startsWith('MOODLE_')) return;
         if (map[key]) return;
         const suggestion = Object.keys(map).find(k => k.toLowerCase() === key.toLowerCase());
         if (suggestion) {
