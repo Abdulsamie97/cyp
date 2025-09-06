@@ -10,7 +10,8 @@ import { extractDestinationAndName } from './cli-util.js';
 
 dotenv.config({ path: path.resolve(process.cwd(), 'test-data.env') });
 
-function resolve(map: Record<string, string>, key: string, kind: string): string {
+
+export function resolve(map: Record<string, string>, key: string, kind: string, failOnMissing = true): string {
     if (map[key]) {
         return map[key];
     }
@@ -19,10 +20,15 @@ function resolve(map: Record<string, string>, key: string, kind: string): string
         console.warn(`${kind} '${key}' nicht gefunden. Meintest du '${suggestion}'?`);
         return map[suggestion];
     }
-    console.warn(`${kind} '${key}' nicht gefunden. Verfügbare ${kind.toLowerCase()}e: ${Object.keys(map).join(', ')}`);
+    // console.warn(`${kind} '${key}' nicht gefunden. Verfügbare ${kind.toLowerCase()}e: ${Object.keys(map).join(', ')}`);
+
+    const message = `${kind} '${key}' nicht gefunden. Verfügbare ${kind.toLowerCase()}e: ${Object.keys(map).join(', ')}`;
+    if (failOnMissing) {
+        throw new Error(message);
+    }
+    console.warn(message);
     return key;
 }
-
 
 
 export function generateCypress(model: Model, filePath: string, destination: string | undefined): string {
@@ -43,6 +49,10 @@ export function generateCypress(model: Model, filePath: string, destination: str
 
     let output = '';
     const { MOODLE_USER, MOODLE_PASS } = process.env;
+        if (!MOODLE_USER || !MOODLE_PASS) {
+        console.error('Fehler: MOODLE_USER und MOODLE_PASS müssen in test-data.env gesetzt sein.');
+        process.exit(1);
+    }
 
     for (const test of model.tests) {
         output += `describe('${test.name}', () => {\n`;
