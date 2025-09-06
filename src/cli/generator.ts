@@ -33,7 +33,7 @@ export function resolve(map: Record<string, string>, key: string, kind: string, 
 
 export function generateCypress(model: Model, filePath: string, destination: string | undefined): string {
     const data = extractDestinationAndName(filePath, destination);
-    const cypressFolder = data.destination ?? 'src/generated';
+    const cypressFolder = data.destination ?? '../../out/generated';
 
     if (!fs.existsSync(cypressFolder)) {
         fs.mkdirSync(cypressFolder, { recursive: true });

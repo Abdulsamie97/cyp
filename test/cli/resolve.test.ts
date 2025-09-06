@@ -15,4 +15,13 @@ describe('resolve', () => {
         expect(result).toBe('unknown');
         warn.mockRestore();
     });
+
+
+   test('suggests existing key for different casing', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const result = resolve(map, 'KNOWN', 'Selektor');
+        expect(result).toBe('value');
+        expect(warn).toHaveBeenCalledWith("Selektor 'KNOWN' nicht gefunden. Meintest du 'known'?");
+        warn.mockRestore();
+    });
 });

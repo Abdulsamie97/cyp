@@ -43,8 +43,8 @@ interface FilePathData {
 }
 
 export function extractDestinationAndName(filePath: string, destination: string | undefined): FilePathData {
-    const baseName = path.basename(filePath, path.extname(filePath)); // z.B. "login"
-    const dirName = path.dirname(filePath); // z.B. "test/dsl"
+    const baseName = path.basename(filePath, path.extname(filePath)); 
+    const dirName = path.dirname(filePath); 
 
     return {
         destination: destination ?? path.join(dirName, 'generated'),
