@@ -44,10 +44,10 @@ export default function(): void {
         .command('generate')
         .argument('<file>', `source file (possible file extensions: ${fileExtensions})`)
         .option('-d, --destination <dir>', 'destination directory of generating')
-        .description('generates JavaScript code that prints "Hello, {name}!" for each greeting in a source file')
+        .description('Generates Cypress tests from a DSL specification / Erzeugt Cypress-Tests aus einer DSL-Spezifikation')
         .action(generateAction);
 
     program.parse(process.argv);
 }
-generateAction('test/dsl/login.cdsl', { destination: 'out/generated' });
+//generateAction('test/dsl/login.cdsl', { destination: 'out/generated' });
 
