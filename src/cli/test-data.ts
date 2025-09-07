@@ -1,6 +1,6 @@
 export const testData: Record<string, string> = {
     url: 'https://lsf.htw-berlin.de',
-    messageBox: '575524',
+    messageBox: 'Angemeldet',
     dozierenBox: 'Dozierendenpläne',
     searchProfname: 'Baar',
     appliedLogic: 'M201 Applied Logic (PÜ)',

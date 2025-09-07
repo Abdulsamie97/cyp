@@ -3,7 +3,7 @@ export const selectorMap: Record<string, string> = {
   username: '.loginuser',
   password: '.loginpass',
   loginButton: '.submit',
-  loginSuccess: '#wrapper > div.divloginstatus > span:nth-child(3)',
+  loginSuccess: '[class="divloginstatus"]',
   dozierenPlan: '#makronavigation > ul > a:nth-child(6)',
   searchProf: '#wrapper > div.divcontent > div.content > div > form > fieldset',
   startSearch: '#wrapper > div.divcontent > div.content > div > form > input[type=submit]:nth-child(14)',
