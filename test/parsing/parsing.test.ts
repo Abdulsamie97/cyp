@@ -27,4 +27,12 @@ describe('Parsing tests', () => {
         expect(testNode?.name).toBe('login');
         expect(testNode?.steps).toHaveLength(4);
     });
+    
+    test('report parser errors for invalid syntax', async () => {
+        const document = await parse(`
+            TEST login
+            FILL username "user"
+        `);
+        expect(document.parseResult.parserErrors.length).toBeGreaterThan(0);
+    });
 });

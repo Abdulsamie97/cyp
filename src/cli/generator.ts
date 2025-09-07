@@ -44,6 +44,7 @@ export function generateCypress(model: Model, filePath: string, destination: str
 
     if (!model.tests || model.tests.length === 0) {
         console.warn('Keine Tests im Modell gefunden.');
+        fs.writeFileSync(generatedFilePath, '');
         return generatedFilePath;
     }
 
@@ -69,11 +70,13 @@ export function generateCypress(model: Model, filePath: string, destination: str
                 output += `${indentation}cy.wait(1000);\n`;
             } else if (step.$type === 'Fill') {
                 const valueKey = step.value.replace(/^["']|["']$/g, '');
-                let actualValue = resolve(testData, valueKey, 'Testdaten');
-                if (actualValue === 'MOODLE_USER') {
+                let actualValue = '';
+                if (valueKey === 'MOODLE_USER') {
                     actualValue = MOODLE_USER ?? '';
-                } else if (actualValue === 'MOODLE_PASS') {
+                } else if (valueKey === 'MOODLE_PASS') {
                     actualValue = MOODLE_PASS ?? '';
+                } else {
+                    actualValue = resolve(testData, valueKey, 'Testdaten');
                 }
                 const selector = resolve(selectorMap, step.selector, 'Selektor');
                 output += `${indentation}cy.get('${selector}').type(${JSON.stringify(actualValue)});\n`;

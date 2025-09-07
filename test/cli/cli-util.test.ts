@@ -1,15 +1,17 @@
-+15-0
 import { describe, expect, test } from 'vitest';
+import * as path from 'node:path';
 import { extractDestinationAndName } from '../../src/cli/cli-util.js';
 
 describe('extractDestinationAndName', () => {
+    const inputPath = path.join('test', 'dsl', 'login.cdsl');
+
     test('returns default destination when none is provided', () => {
-        const result = extractDestinationAndName('test/dsl/login.cdsl', undefined);
-        expect(result).toEqual({ destination: 'test/dsl/generated', name: 'login' });
+        const result = extractDestinationAndName(inputPath, undefined);
+        expect(result).toEqual({ destination: path.join('out', 'generated'), name: 'login' });
     });
 
     test('uses provided destination', () => {
-        const result = extractDestinationAndName('test/dsl/login.cdsl', 'out/tests');
-        expect(result).toEqual({ destination: 'out/tests', name: 'login' });
+        const result = extractDestinationAndName(inputPath, path.join('out', 'tests'));
+        expect(result).toEqual({ destination: path.join('out', 'tests'), name: 'login' });
     });
 });

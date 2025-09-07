@@ -49,5 +49,5 @@ export default function(): void {
 
     program.parse(process.argv);
 }
-//generateAction('test/dsl/login.cdsl', { destination: 'out/generated' });
+generateAction('test/dsl/login.cdsl', { destination: 'out/generated' });
 

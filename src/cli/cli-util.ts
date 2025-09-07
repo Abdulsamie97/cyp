@@ -43,11 +43,13 @@ interface FilePathData {
 }
 
 export function extractDestinationAndName(filePath: string, destination: string | undefined): FilePathData {
-    const baseName = path.basename(filePath, path.extname(filePath)); 
-    const dirName = path.dirname(filePath); 
-
+    //Die auskommentierte Zeilen wurden durch die zeile darunter ersetzt, die neuen Befehle ermöglichen die Erzeugung in out/generated auch ohne den Pfad anzugeben 
+    // const baseName = path.basename(filePath, path.extname(filePath)); 
+    // const dirName = path.dirname(filePath); 
+    const baseName = path.basename(filePath, path.extname(filePath));
     return {
-        destination: destination ?? path.join(dirName, 'generated'),
+        // destination: destination ?? path.join(dirName, 'generated'),
+        destination: destination ?? path.join('out', 'generated'),      //ist wie out/generated, die fkt, erzeugt es automatisch
         name: baseName
     };
 }
