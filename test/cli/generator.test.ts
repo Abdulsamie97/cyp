@@ -49,7 +49,7 @@ describe('generateCypress', () => {
                         { $type: 'Navigate', url: 'url' },
                         { $type: 'Fill', selector: 'username', value: '"messageBox"' },
                         { $type: 'Click', selector: 'loginButton' },
-                        { $type: 'ExpectText', selector: 'loginSuccess', text: 'dozierenBox' }
+                        { $type: 'ExpectText', selector: 'loginSuccess', text: 'lectureBox' }
                     ]
                 }
             ]
@@ -57,7 +57,7 @@ describe('generateCypress', () => {
         const generated = generateCypress(model, filePath, undefined);
         const content = fs.readFileSync(generated, 'utf-8');
         expect(content).toContain("cy.visit('https://lsf.htw-berlin.de')");
-        expect(content).toContain("cy.get('.loginuser').type(\"575524\")");
+        expect(content).toContain("cy.get('.loginuser').type(\"Angemeldet\")");
         expect(content).toContain("cy.get('.submit').click()");
         expect(content).toContain("Dozierendenpl\u00e4ne");
         fs.rmSync(tempDir, { recursive: true, force: true });

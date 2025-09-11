@@ -4,8 +4,8 @@ TEST testLogin
   FILL password WITH 'MOODLE_PASS'
   CLICK loginButton
   EXPECT TEXT loginSuccess IN messageBox
-  EXPECT TEXT dozierenPlan IN dozierenBox
-  CLICK dozierenPlan
+  EXPECT TEXT lecturerPlan IN lectureBox
+  CLICK lecturerPlan
   FILL searchProf WITH 'searchProfname'
   CLICK startSearch
   CLICK nextWeekbutton

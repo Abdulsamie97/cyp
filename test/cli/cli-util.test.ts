@@ -6,12 +6,12 @@ describe('extractDestinationAndName', () => {
     const inputPath = path.join('test', 'dsl', 'login.cdsl');
 
     test('returns default destination when none is provided', () => {
-        const result = extractDestinationAndName(inputPath, undefined);
-        expect(result).toEqual({ destination: path.join('out', 'generated'), name: 'login' });
+        const result = extractDestinationAndName(inputPath, undefined);                             //keinen Ausgabepfad angegeben
+        expect(result).toEqual({ destination: path.join('out', 'generated'), name: 'login' });      //Prüfen, ob Ausgabe in /out/generated ist
     });
 
     test('uses provided destination', () => {
-        const result = extractDestinationAndName(inputPath, path.join('out', 'tests'));
-        expect(result).toEqual({ destination: path.join('out', 'tests'), name: 'login' });
+        const result = extractDestinationAndName(inputPath, path.join('out', 'tests'));            // /out/tests als Ausgabepfad angegeben
+        expect(result).toEqual({ destination: path.join('out', 'tests'), name: 'login' });         // Prüfen, ob angegebener Pfad /out/tests als Ausgabe verwendet
     });
 });

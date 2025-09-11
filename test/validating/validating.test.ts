@@ -32,8 +32,18 @@ describe('Validating', () => {
         const messages = document?.diagnostics?.map(diagnosticToString).join('\n');
         expect(messages).toContain("Selektor 'unknown' unbekannt");
     });
-});
 
+    test('unknown test data produces error', async () => {
+        document = await parse(`
+            TEST login
+            EXPECT TEXT loginSuccess IN unknownData
+        `);
+        const messages = document?.diagnostics?.map(diagnosticToString).join('\n');
+        expect(messages).toContain("Testdaten 'unknownData' unbekannt");
+    });
+
+});
+//Diagnose: was aus dem test raußkam
 function diagnosticToString(d: Diagnostic) {
     return `[${d.range.start.line}:${d.range.start.character}..${d.range.end.line}:${d.range.end.character}]: ${d.message}`;
 }

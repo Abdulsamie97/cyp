@@ -1,0 +1,6 @@
+TEST test2
+  NAVIGATE TO url
+  FILL username WITH 'MOODLE_USER'
+  FILL password WITH 'MOODLE_PASS'
+  CLICK loginButton
+  EXPECT TEXT loginSuccess IN messageBox
